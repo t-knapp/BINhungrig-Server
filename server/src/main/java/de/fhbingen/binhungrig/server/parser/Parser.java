@@ -36,6 +36,7 @@ public class Parser extends AParser {
 	@Override
 	public List<Dish> parse(UrlBuilder builder) {
 		final String urlString = builder.getUrl();
+		final List<Dish> resultDishes = new LinkedList<Dish>();
 		
 		Logger.getGlobal().log(Level.INFO, "parse: " + urlString);
 		
@@ -76,7 +77,7 @@ public class Parser extends AParser {
 				title = divTitle.text();
 				//String oldTitle = title;
 				List<String> groupedIngredents = getIngredients(title);
-				title = removeIngredents(title, groupedIngredents);
+				title = removeIngredents(title);
 				ingredients = mergeIngredents(groupedIngredents);
 				
 				//Price
@@ -87,14 +88,7 @@ public class Parser extends AParser {
 				final Element divVegan = divMenuSpeise.getElementsByClass(DIVCLASSVEGAN).first();
 				DishType type = getType(divVegan);
 				
-				//TODO: Create DB Object and fire
-				System.out.println(date);
-				//System.out.println(oldTitle);
-				System.out.println(title);
-				System.out.println(Arrays.toString(ingredients));
-				System.out.println(Arrays.toString(prices));
-				System.out.println(type);
-				System.out.println();
+				resultDishes.add(new Dish(title, date, ingredients, prices, type));
 				break;
 			case DIVCLASSSPECIAL:
 				//Special dishes: Soups, Salads and Sausage
@@ -102,38 +96,35 @@ public class Parser extends AParser {
 				//Foreach Special Dish
 				for (Element element : specialMenues) {
 					
-					System.out.println(date);
-					
 					//Title and Ingredients
 					Element divName = element.getElementsByClass(DIVCLASSSPNAME).first();
-					String spTitle = divName.text().replace("oder ", "");
+					String spTitle = divName.text().trim();
+					
+					//Fix: Remove "oder" if first word
+					spTitle = (spTitle.startsWith("oder")) ? spTitle.replace("oder", "").trim() : spTitle;
+					
+					//Fix: Replace "oder mit" with "mit"
+					spTitle = spTitle.replace("oder mit", "mit");
+					
 					List<String> spGroupedIngredients = getIngredients(spTitle);
 					String[] spIngedients = mergeIngredents(spGroupedIngredients);
-					spTitle = removeIngredents(spTitle, spGroupedIngredients);
-					System.out.println(spTitle);
-					System.out.println(Arrays.toString(spIngedients));
+					spTitle = removeIngredents(spTitle);
 					
 					//Price
 					Element divSPPrice = element.getElementsByClass(DIVCLASSPRICE).first();
 					Double[] spPrice = getPrices(divSPPrice.text());
-					System.out.println(Arrays.toString(spPrice));
 					
 					//Type
 					DishType spType = getType(divName);
-					System.out.println(spType);
-					System.out.println();
+									
+					resultDishes.add(new Dish(spTitle, date, spIngedients, spPrice, spType));
 				}
-				
 				break;
-
 			default:
 				break;
-			}
-			
-			
+			}	
 		}
-			
-		return null;
+		return resultDishes;
 	}
 
 	/**
@@ -181,15 +172,16 @@ public class Parser extends AParser {
 	/**
 	 * Removes ingredients from dish title
 	 * @param title
-	 * @param groupedIngredents
 	 * @return
 	 */
-	private String removeIngredents(final String title, final List<String> groupedIngredents){
-		String result = title;
-		for (String string : groupedIngredents) {
-			result = result.replaceAll(string, "");
-		}
-		return result.replace("(", "").replace(")", "").replaceAll(" +", " ").trim();
+	private String removeIngredents(final String title){
+		final Pattern patternIngredients = Pattern.compile("(\\([^\\(]*\\))");
+		final Matcher matcherIngredients = patternIngredients.matcher(title);
+		final String removedIngredients = matcherIngredients.replaceAll("").trim();
+		
+		final Pattern patternWhitespaces = Pattern.compile("\\s+");
+		final Matcher matcherWhitespaces = patternWhitespaces.matcher(removedIngredients);
+		return matcherWhitespaces.replaceAll(" ");
 	}
 	
 	private String getDate(final Element divDate){

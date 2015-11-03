@@ -28,6 +28,10 @@ public class UrlBuilder {
 		return sb.toString();
 	}
 	
+	public Building getBuilding(){
+		return building;
+	}
+	
 	public enum Building {
 		ZENTRALMENSA ("building_id=1"),
 		BINGENCAMPUS ("building_id=4"),

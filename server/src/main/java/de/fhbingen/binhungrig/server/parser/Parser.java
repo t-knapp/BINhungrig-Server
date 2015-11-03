@@ -17,6 +17,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import de.fhbingen.binhungrig.server.parser.Dish.DishType;
+import de.fhbingen.binhungrig.server.parser.UrlBuilder.Building;
 
 public class Parser extends AParser {
 
@@ -37,6 +38,7 @@ public class Parser extends AParser {
 	public List<Dish> parse(UrlBuilder builder) {
 		final String urlString = builder.getUrl();
 		final List<Dish> resultDishes = new LinkedList<Dish>();
+		final Building building = builder.getBuilding();
 		
 		Logger.getGlobal().log(Level.INFO, "parse: " + urlString);
 		
@@ -88,7 +90,7 @@ public class Parser extends AParser {
 				final Element divVegan = divMenuSpeise.getElementsByClass(DIVCLASSVEGAN).first();
 				DishType type = getType(divVegan);
 				
-				resultDishes.add(new Dish(title, date, ingredients, prices, type));
+				resultDishes.add(new Dish(title, date, ingredients, prices, building, type));
 				break;
 			case DIVCLASSSPECIAL:
 				//Special dishes: Soups, Salads and Sausage
@@ -117,7 +119,7 @@ public class Parser extends AParser {
 					//Type
 					DishType spType = getType(divName);
 									
-					resultDishes.add(new Dish(spTitle, date, spIngedients, spPrice, spType));
+					resultDishes.add(new Dish(spTitle, date, spIngedients, spPrice, building, spType));
 				}
 				break;
 			default:

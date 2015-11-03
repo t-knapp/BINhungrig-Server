@@ -2,6 +2,8 @@ package de.fhbingen.binhungrig.server.parser;
 
 import java.util.Arrays;
 
+import de.fhbingen.binhungrig.server.parser.UrlBuilder.Building;
+
 public class Dish {
 
 	public enum DishType {
@@ -15,11 +17,13 @@ public class Dish {
 			final String date,
 			final String[] ingredients,
 			final Double[] prices,
+			final Building building,
 			final DishType type) {
 		this.title       = title;
 		this.date        = date;
 		this.ingredients = ingredients;
 		this.prices      = prices;
+		this.building    = building;
 		this.type        = type;
 	}
 	
@@ -35,6 +39,9 @@ public class Dish {
 	public Double[] getPrices() {
 		return prices;
 	}
+	public Building getBuilding() {
+		return building;
+	}
 	public DishType getType() {
 		return type;
 	}
@@ -46,7 +53,8 @@ public class Dish {
 		sb.append(title).append(" | ");
 		sb.append(Arrays.toString(ingredients)).append(" | ");
 		sb.append(Arrays.toString(prices)).append(" | ");
-		sb.append(type).append(" }");
+		sb.append(type).append(" | ");
+		sb.append(building.name()).append(" }");
 		return sb.toString();
 	}
 	
@@ -55,4 +63,5 @@ public class Dish {
 	private String[] ingredients;
 	private Double[] prices; //Index 0 student, Index 0 non-student
 	private DishType type;
+	private Building building;
 }

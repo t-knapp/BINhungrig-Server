@@ -18,6 +18,8 @@ import de.fhbingen.binhungrig.server.data.DateRepository;
 import de.fhbingen.binhungrig.server.data.DeleteRepository;
 import de.fhbingen.binhungrig.server.data.Dish;
 import de.fhbingen.binhungrig.server.data.DishRepository;
+import de.fhbingen.binhungrig.server.data.Rating;
+import de.fhbingen.binhungrig.server.data.RatingRepository;
 import de.fhbingen.binhungrig.server.data.SequenceRepository;
 
 @RestController
@@ -75,9 +77,24 @@ public class ClientRestController {
 		return dishRepo.findBydishId(id).getOfferedAtDates();
 	}
 	
+	@RequestMapping("/dishes/{id}/ratings")
+	public List<Rating> ratingsOfDish(@PathVariable long id) {
+		return dishRepo.findBydishId(id).getRatings();
+	}
+	
 	@RequestMapping("/dishes/{id}/building")
 	public Building buildingOfDish(@PathVariable long id) {
 		return dishRepo.findBydishId(id).getBuilding();
+	}
+	
+	@RequestMapping("/ratings")
+	public List<Rating> ratings(){
+		return ratingRepo.findAll();
+	}
+	
+	@RequestMapping("/ratings/{id}/dish")
+	public Dish dishOfRating(@PathVariable long id){
+		return ratingRepo.findByratingId(id).getDish();
 	}
 	
 	/*
@@ -131,5 +148,8 @@ public class ClientRestController {
 	
 	@Autowired
 	private DateRepository dateRepo;
+	
+	@Autowired
+	private RatingRepository ratingRepo;
 
 }

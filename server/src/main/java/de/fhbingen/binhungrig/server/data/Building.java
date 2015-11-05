@@ -1,5 +1,6 @@
 package de.fhbingen.binhungrig.server.data;
 
+import java.sql.Time;
 import java.util.Date;
 import java.util.List;
 
@@ -26,8 +27,8 @@ public class Building {
 	
 	private String name;
 	private String address;
-	private Date timeOpenFrom;
-	private Date timeOpenTill;
+	private Time timeOpenFrom;
+	private Time timeOpenTill;
 	
 	//All dishes that getting served in this building
 	@OneToMany(mappedBy = "building")
@@ -72,7 +73,7 @@ public class Building {
 		return timeOpenFrom;
 	}
 
-	public void setTimeOpenFrom(Date timeOpenFrom) {
+	public void setTimeOpenFrom(Time timeOpenFrom) {
 		this.timeOpenFrom = timeOpenFrom;
 	}
 
@@ -80,7 +81,7 @@ public class Building {
 		return timeOpenTill;
 	}
 
-	public void setTimeOpenTill(Date timeOpenTill) {
+	public void setTimeOpenTill(Time timeOpenTill) {
 		this.timeOpenTill = timeOpenTill;
 	}
 

@@ -5,24 +5,27 @@ import java.sql.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-@Table(name = "Ratings")
-public class Rating {
+@Table(name = "Photos")
+public class Photo {
 
 	@Id
-	private long ratingId;
+	@GeneratedValue
+	private long photoId;
 	
 	private long seq;
 	
-	private Date date;
+	private Date dateUpload;
 	
-	private short value;
+	private int complains;
 	
 	@Column(name = "fk_dishId")
 	private long dishId;
@@ -32,29 +35,28 @@ public class Rating {
 	@JsonIgnore
 	private Dish dish;
 
-	@JsonIgnore
-	public Dish getDish(){
-		return dish;
-	}
-
-	public long getRatingId() {
-		return ratingId;
+	public long getPhotoId() {
+		return photoId;
 	}
 
 	public long getSeq() {
 		return seq;
 	}
 
-	public Date getDate() {
-		return date;
+	public Date getDateUpload() {
+		return dateUpload;
 	}
 
-	public short getValue() {
-		return value;
+	public int getComplains() {
+		return complains;
 	}
 
 	public long getDishId() {
 		return dishId;
 	}
-	
+
+	public Dish getDish() {
+		return dish;
+	}
+		
 }

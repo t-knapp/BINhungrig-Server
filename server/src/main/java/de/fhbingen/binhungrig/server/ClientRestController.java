@@ -1,7 +1,8 @@
 package de.fhbingen.binhungrig.server;
 
+import java.sql.Time;
+import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -18,6 +19,8 @@ import de.fhbingen.binhungrig.server.data.DateRepository;
 import de.fhbingen.binhungrig.server.data.DeleteRepository;
 import de.fhbingen.binhungrig.server.data.Dish;
 import de.fhbingen.binhungrig.server.data.DishRepository;
+import de.fhbingen.binhungrig.server.data.OfferedAtRepository;
+import de.fhbingen.binhungrig.server.data.PhotoRepository;
 import de.fhbingen.binhungrig.server.data.Rating;
 import de.fhbingen.binhungrig.server.data.RatingRepository;
 import de.fhbingen.binhungrig.server.data.SequenceRepository;
@@ -51,8 +54,9 @@ public class ClientRestController {
 		b.setBuildingId(id);
 		b.setName(name);
 		b.setAddress(address);
-		b.setTimeOpenFrom(new Date());
-		b.setTimeOpenTill(new Date());
+
+		b.setTimeOpenFrom(new Time(System.currentTimeMillis()));
+		b.setTimeOpenTill(new Time(System.currentTimeMillis()));
 		
 		return buildingRepo.save(b);
 	}
@@ -107,25 +111,28 @@ public class ClientRestController {
 			@RequestParam(value = "seq") long seq){
 		Changes changes = new Changes();
 		
-		//All subscribed buildings
+		//All new (or updated) buildings
 		changes.buildings = buildingRepo.findBySeqGreaterThan(seq);
 		
 		//All deletes
 		changes.deletes = deleteRepo.findBySeqGreaterThan(seq);
 		
-		//All dishes
+		//All dishes for given buildings and newer seq
 		Set<Long> setBuildings = new HashSet<Long>();
 		Collections.addAll(setBuildings, arBuildings);
 		changes.dishes = dishRepo.findBybuildingIdInAndSeqGreaterThan(setBuildings, seq);
 		
+		// All new ratings for dishes, served in selected buildings
+		changes.ratings = ratingRepo.findByBuildingIdsAndSeq(Arrays.asList(arBuildings), seq);
+		
 		//All offeredAt
-		//changes.dates = dateRepo.findByBuildingsAndSeq(arBuildings, seq);
+		changes.offeredAt = offeredAtRepo.findByBuildingIdsAndSeq(Arrays.asList(arBuildings), seq);
 		
-		// Dates
+		// All new Dates for dishes, served in selected buildings
+		changes.dates = dateRepo.findByBuildingIdsAndSeq(Arrays.asList(arBuildings), seq);
 		
-		// Ratings
-		
-		// Photos ?
+		// All new Photos for dishes, served in selected buildings
+		changes.photos = photoRepo.findByBuildingIdsAndSeq(Arrays.asList(arBuildings), seq);
 		
 		//Last sequence
 		changes.sequence = seqRepo.getLast();
@@ -151,5 +158,11 @@ public class ClientRestController {
 	
 	@Autowired
 	private RatingRepository ratingRepo;
+	
+	@Autowired
+	private OfferedAtRepository offeredAtRepo;
+	
+	@Autowired
+	private PhotoRepository photoRepo;
 
 }

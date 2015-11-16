@@ -20,6 +20,7 @@ public class Rating {
 	
 	private long seq;
 	
+	//TODO: Create and use FK on Dates.dateId
 	private Date date;
 	
 	private short value;

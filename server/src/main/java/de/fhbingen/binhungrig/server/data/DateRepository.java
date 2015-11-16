@@ -20,4 +20,8 @@ public interface DateRepository extends CrudRepository<Date, Long> {
 	List<Date> findByBuildingIdsAndSeq(
 			@Param("buildings") List<Long> buildings,
 			@Param("seq") long seq);
+	
+	List<Date> findBySeqGreaterThan(final long seq);
+	
+	List<Date> findBySeqGreaterThanAndDateGreaterThanEqual(final long seq, final java.sql.Date date);
 }

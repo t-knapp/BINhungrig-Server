@@ -26,6 +26,10 @@ public class Dish {
 	
 	private String title;
 	
+	//TODO: String-Array of Ingredients
+	//TODO: Before insert, check if ingredients did change or not to
+	//prevent seq++ if content did not change.
+	
 	private float priceStd;
 	
 	private float priceNonStd;

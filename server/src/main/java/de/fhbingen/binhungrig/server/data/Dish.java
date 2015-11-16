@@ -1,10 +1,18 @@
 package de.fhbingen.binhungrig.server.data;
 
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -15,30 +23,54 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import de.fhbingen.binhungrig.server.parser.Dish.DishType;
+
 @Entity
 @Table(name = "Dishes")
 public class Dish {
 
+	public Dish(){
+		
+	}
+	
+	public Dish(
+			final String title,
+			final String ingredients,
+			final float priceStd,
+			final float priceNonStd,
+			final DishType type,
+			final long buildingId
+			){
+		this.title = title;
+		this.ingredients = ingredients;
+		this.priceStd = priceStd;
+		this.priceNonStd = priceNonStd;
+		this.buildingId = buildingId;
+		this.type = type;
+	}
+	
 	@Id
+	@GeneratedValue
 	private long dishId;
 	
 	private long seq;
 	
 	private String title;
 	
-	//TODO: String-Array of Ingredients
-	//TODO: Before insert, check if ingredients did change or not to
-	//prevent seq++ if content did not change.
+	private String ingredients;
 	
 	private float priceStd;
 	
 	private float priceNonStd;
 	
+	@Enumerated(EnumType.ORDINAL)
+	private DishType type;
+	
 	@Column(name = "fk_buildingId")
 	private long buildingId;
 	
 	//Ref. to dates on this dish is offered.
-	@ManyToMany(fetch = FetchType.LAZY)
+	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinTable(name = "offeredAt", 
 	    joinColumns = @JoinColumn(name = "fk_dishId", referencedColumnName = "dishId"),
 	    inverseJoinColumns = @JoinColumn(name = "fk_dateId", referencedColumnName = "dateId")
@@ -95,5 +127,43 @@ public class Dish {
 	public float getPriceNonStd() {
 		return priceNonStd;
 	}
+
+	public String getIngredients() {
+		return ingredients;
+	}
 		
+	public DishType getType() {
+		return type;
+	}
+
+	/**
+	 * Compare this Dish to a Dish from Parser
+	 * @return
+	 */
+	public boolean needToUpdate(final de.fhbingen.binhungrig.server.parser.Dish other){
+		// Possible Changes: Prices, Ingredients
+		if(priceNonStd != other.getPriceNonStd() || priceStd != other.getPriceStd()){
+			return true;
+		}
+		
+		String[] myIngredients = ingredients.split(",");
+		Arrays.sort(myIngredients);
+		
+		String[] otherIngredients = other.getIngredients().split(",");
+		Arrays.sort(otherIngredients);
+		
+		if(!Arrays.deepEquals(myIngredients, otherIngredients)){
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public Dish update(final de.fhbingen.binhungrig.server.parser.Dish newDish){
+		// Possible Changes: Prices, Ingredients
+		priceNonStd = newDish.getPriceNonStd();
+		priceStd = newDish.getPriceStd();
+		ingredients = newDish.getIngredients();
+		return this;
+	}
 }

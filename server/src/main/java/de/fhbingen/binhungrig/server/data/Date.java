@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -16,9 +17,18 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Table(name = "Dates")
 public class Date {
 
+	public Date(){};
+	
+	public Date(final String date){
+		this.date = java.sql.Date.valueOf(date);
+	}
+	
 	@Id
+	@GeneratedValue
 	private long dateId;
+	
 	private long seq;
+	
 	private java.sql.Date date;
 	
 	@ManyToMany(fetch = FetchType.LAZY)

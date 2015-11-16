@@ -2,12 +2,13 @@ package de.fhbingen.binhungrig.server.parser;
 
 public class UrlBuilder {
 
+	private final String BUILDING = "building_id=";
 	private String baseURL = "http://www.studierendenwerk-mainz.de/speiseplan/db/include.php?";
-	private Building building;
+	private long building;
 	private TimeInterval timeInterval;
 		
-	public UrlBuilder setBuilding(Building building){
-		this.building = building;
+	public UrlBuilder setBuilding(final long buildingId){
+		this.building = buildingId;
 		return this;
 	}
 	
@@ -18,7 +19,7 @@ public class UrlBuilder {
 	
 	public String getUrl() {
 		StringBuilder sb = new StringBuilder(baseURL);
-		sb.append(this.building.toString());
+		sb.append(BUILDING).append(building);
 		
 		//Append time modifier if set
 		if(timeInterval != null){
@@ -28,7 +29,7 @@ public class UrlBuilder {
 		return sb.toString();
 	}
 	
-	public Building getBuilding(){
+	public long getBuildingId(){
 		return building;
 	}
 	
@@ -39,7 +40,7 @@ public class UrlBuilder {
 		
 		private final String modifier;
 		
-		private Building(final String modifier){
+		Building(final String modifier){
 			this.modifier = modifier;
 		}
 		
@@ -47,6 +48,11 @@ public class UrlBuilder {
 		public String toString() {
 			return this.modifier;
 		}
+		
+		public long getBuildingId(){
+			return Long.parseLong(modifier.split("=")[1]);
+		}
+		
 	}
 	
 	public enum TimeInterval {

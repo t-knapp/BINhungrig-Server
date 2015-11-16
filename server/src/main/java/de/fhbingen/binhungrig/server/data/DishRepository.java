@@ -12,4 +12,9 @@ public interface DishRepository extends CrudRepository<Dish, Long>{
 	List<Dish> findBybuildingIdInAndSeqGreaterThan(Collection<Long> buildings, long seq);
 	
 	Dish findBydishId(long id);
+	
+	// Fetcher commands
+	
+	Dish findByTitleAndBuildingId(final String title, final long buildingId);
+	
 }

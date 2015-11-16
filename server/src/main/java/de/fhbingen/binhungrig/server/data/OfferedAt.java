@@ -15,6 +15,13 @@ import javax.persistence.Table;
 @Table(name = "offeredAt")
 public class OfferedAt {
 	
+	public OfferedAt(){};
+	
+	public OfferedAt(final long dishId, final long dateId){
+		this.dishId = dishId;
+		this.dateId = dateId;
+	}
+	
 	@Column(name = "fk_dishId")
 	private long dishId;
 	

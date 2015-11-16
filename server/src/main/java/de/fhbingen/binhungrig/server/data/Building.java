@@ -40,7 +40,6 @@ public class Building {
 		return dishes;
 	}
 	
-	
 	public long getBuildingId() {
 		return buildingId;
 	}

@@ -15,6 +15,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.util.StringUtils;
 
 import de.fhbingen.binhungrig.server.parser.Dish.DishType;
 import de.fhbingen.binhungrig.server.parser.UrlBuilder.Building;
@@ -38,7 +39,7 @@ public class Parser extends AParser {
 	public List<Dish> parse(UrlBuilder builder) {
 		final String urlString = builder.getUrl();
 		final List<Dish> resultDishes = new LinkedList<Dish>();
-		final Building building = builder.getBuilding();
+		final long buildingId = builder.getBuildingId();
 		
 		Logger.getGlobal().log(Level.INFO, "parse: " + urlString);
 		
@@ -59,8 +60,8 @@ public class Parser extends AParser {
 			
 		String date = null;
 		String title = null;
-		String[] ingredients = null;
-		Double[] prices = null;
+		String ingredients = null;
+		Float[] prices = null;
 		for(int i = 0; i < rootDiv.children().size(); i++){
 			Element currentElement = rootDiv.child(i);
 			switch (currentElement.className()) {
@@ -90,7 +91,15 @@ public class Parser extends AParser {
 				final Element divVegan = divMenuSpeise.getElementsByClass(DIVCLASSVEGAN).first();
 				DishType type = getType(divVegan);
 				
-				resultDishes.add(new Dish(title, date, ingredients, prices, building, type));
+				resultDishes.add(
+						new Dish(
+								title, 
+								date, 
+								ingredients, 
+								prices[0],
+								prices[1],
+								buildingId, 
+								type));
 				break;
 			case DIVCLASSSPECIAL:
 				//Special dishes: Soups, Salads and Sausage
@@ -109,17 +118,20 @@ public class Parser extends AParser {
 					spTitle = spTitle.replace("oder mit", "mit");
 					
 					List<String> spGroupedIngredients = getIngredients(spTitle);
-					String[] spIngedients = mergeIngredents(spGroupedIngredients);
+					String spIngedients = mergeIngredents(spGroupedIngredients);
 					spTitle = removeIngredents(spTitle);
 					
 					//Price
 					Element divSPPrice = element.getElementsByClass(DIVCLASSPRICE).first();
-					Double[] spPrice = getPrices(divSPPrice.text());
+					Float[] spPrice = getPrices(divSPPrice.text());
 					
 					//Type
 					DishType spType = getType(divName);
 									
-					resultDishes.add(new Dish(spTitle, date, spIngedients, spPrice, building, spType));
+					resultDishes.add(new Dish(
+							spTitle, date, spIngedients, spPrice[0], spPrice[1], buildingId, spType
+							)
+					);
 				}
 				break;
 			default:
@@ -155,7 +167,7 @@ public class Parser extends AParser {
 	 * @param groupedIngredents
 	 * @return
 	 */
-	private String[] mergeIngredents(final List<String> groupedIngredents){
+	private String mergeIngredents(final List<String> groupedIngredents){
 		final Set<String> ingredents = new HashSet<String>();
 		
 		String tmp;
@@ -168,7 +180,7 @@ public class Parser extends AParser {
 				ingredents.add(part);
 			}
 		}
-		return ingredents.toArray(new String[0]);
+		return StringUtils.collectionToCommaDelimitedString(ingredents);
 	}
 	
 	/**
@@ -187,15 +199,17 @@ public class Parser extends AParser {
 	}
 	
 	private String getDate(final Element divDate){
-		return divDate.text().split(" ")[1];
+		//input text: Montag 16-11-2015
+		final String[] dateParts = divDate.text().split(" ")[1].split("-");
+		return dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0];
 	}
 	
-	private Double[] getPrices(final String strPrice){
+	private Float[] getPrices(final String strPrice){
 		final Pattern pattern = Pattern.compile("(\\d+.\\d{2})");
 		final Matcher matcher = pattern.matcher(strPrice);
-		final Double[] prices = new Double[2];
+		final Float[] prices = new Float[2];
 		for(int i = 0; i < 2 && matcher.find(); i++){
-			prices[i] = Double.valueOf(matcher.group(i));
+			prices[i] = Float.valueOf(matcher.group(i));
 		}
 		return prices;
 	}

@@ -24,4 +24,7 @@ public interface DateRepository extends CrudRepository<Date, Long> {
 	List<Date> findBySeqGreaterThan(final long seq);
 	
 	List<Date> findBySeqGreaterThanAndDateGreaterThanEqual(final long seq, final java.sql.Date date);
+	
+	// Fetcher Commands
+	Date findByDate(final java.sql.Date date);
 }

@@ -17,4 +17,12 @@ public interface PhotoRepository extends CrudRepository<Photo, Long> {
 			@Param("buildings") List<Long> buildings,
 			@Param("seq") long seq);
 	
+	@Query("SELECT p FROM Photo p " + 
+	       "JOIN p.dish di " + 
+		   "JOIN di.building b " +
+	       "WHERE b.buildingId = :buildingId AND p.seq > :seq"
+		  )
+	List<Photo> findByBuildingIdAndSeqGreaterThan(
+			@Param("buildingId") long buildingId,
+			@Param("seq") long seq);
 }

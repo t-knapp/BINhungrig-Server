@@ -17,6 +17,16 @@ public interface OfferedAtRepository extends CrudRepository<OfferedAt, Long> {
 			@Param("buildings") List<Long> buildings,
 			@Param("seq") long seq);
 	
+	@Query("SELECT oa FROM OfferedAt oa " + 
+		   "JOIN oa.dish di " + 
+           "JOIN di.building b " +
+		   "WHERE b.buildingId = :buildingId AND oa.seq > :seq"
+		  )
+	List<OfferedAt> findByBuildingIdAndSeqGreaterThan(
+			@Param("buildingId") long buildingId,
+			@Param("seq") long seq);
+	
+	
 	// Fetcher commands
 	OfferedAt findByDateIdAndDishId(final long dateId, final long dishId);
 }

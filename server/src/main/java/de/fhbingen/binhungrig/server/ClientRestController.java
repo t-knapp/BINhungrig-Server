@@ -1,17 +1,12 @@
 package de.fhbingen.binhungrig.server;
 
 import java.sql.Date;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import de.fhbingen.binhungrig.server.data.Building;
 import de.fhbingen.binhungrig.server.data.BuildingRepository;
 import de.fhbingen.binhungrig.server.data.Changes;
 import de.fhbingen.binhungrig.server.data.ContainerBuildings;
@@ -37,53 +32,63 @@ public class ClientRestController {
 	
 	@RequestMapping("/changes")
 	public Changes changes(
-			@RequestParam(value = "buildings", defaultValue = "0") Long[] arBuildings,
-			@RequestParam(value = "seq") long seq){
-		Changes changes = new Changes();
+			@RequestParam Map<String, String> allParams
+			){
+		// Extract client sequence (global)
+		final long seq = Long.parseLong(allParams.get("seq"));
+		allParams.remove("seq");
 		
-		//Last sequence
-		changes.sequence = seqRepo.getLast();
+		System.out.println(String.format("Global Sequence is %d", seq));
 		
-		changes.needToUpdate = changes.sequence.getLastSequence() > seq;
+		Changes result = new Changes();
 		
-		if(changes.needToUpdate){
+		// Global stuff: Sequence, Dates, Buildings, Deletes
+		// Clients need to pull changes on all buildings to build list
+		// Clients need to pull dates independent from building id
+		// Sequence is updated at the beginning to ensure no data is skipped
+		// TODO: Alternative: User Database Transactions
+		result.sequence = seqRepo.getLast();
 		
-			// All new (or updated) buildings
-			changes.buildings = buildingRepo.findBySeqGreaterThan(seq);
+		result.dates = dateRepo.findBySeqGreaterThanAndDateGreaterThanEqual(
+				seq, new Date(System.currentTimeMillis()-86400000));
+		
+		result.buildings = buildingRepo.findBySeqGreaterThan(seq);
+		
+		// Skip deletes if new device 
+		if(seq != 0){
+			result.deletes = deleteRepo.findBySeqGreaterThan(seq);
+		}
+				
+		long buildingId;
+		long buildingSeq;
+		for(Map.Entry<String, String> entry : allParams.entrySet()){
+			System.out.println(String.format("buildingId: %s with buildingSeq: %s", entry.getKey(), entry.getValue()));
+			buildingId  = Long.parseLong(entry.getKey());
+			buildingSeq = Long.parseLong(entry.getValue());
 			
-			// All deletes
-			changes.deletes = deleteRepo.findBySeqGreaterThan(seq);
+			// Dishes
+			result.dishes.addAll(dishRepo.findByBuildingIdAndSeqGreaterThan(buildingId, buildingSeq));
 			
-			// All dishes for given buildings and newer seq
-			Set<Long> setBuildings = new HashSet<Long>();
-			Collections.addAll(setBuildings, arBuildings);
-			changes.dishes = dishRepo.findBybuildingIdInAndSeqGreaterThan(setBuildings, seq);
+			// Ratings
+			result.ratings.addAll(ratingRepo.findByBuildingIdAndSeqGreaterThan(buildingId, buildingSeq));
 			
-			// All new ratings for dishes, served in selected buildings
-			changes.ratings = ratingRepo.findByBuildingIdsAndSeq(Arrays.asList(arBuildings), seq);
+			// Photos
+			//result.photos.addAll(photoRepo.findByBuildingIdAndSeqGreaterThan(buildingId, buildingSeq));
 			
-			// All offeredAt
-			changes.offeredAt = offeredAtRepo.findByBuildingIdsAndSeq(Arrays.asList(arBuildings), seq);
-			
-			// All new Dates for dishes, served in selected buildings
-			// TODO: Fix Bug:
-			// If existing dish is added to existing date, a client has not downloaded bc. this
-			// date is not already used by dishes of his building, this date is not downloaded 
-			// if dish and date getting connected with new seq in offeredAt
-			// -> Date does not exist on device -> Dish is not shown!
-			//changes.dates = dateRepo.findByBuildingIdsAndSeq(Arrays.asList(arBuildings), seq);
-			// Fix
-			changes.dates = dateRepo.findBySeqGreaterThanAndDateGreaterThanEqual(
-					seq,
-					new Date(System.currentTimeMillis()-86400000) // Yesterday
-			);
-			
-			// All new Photos for dishes, served in selected buildings
-	//		changes.photos = photoRepo.findByBuildingIdsAndSeq(Arrays.asList(arBuildings), seq);
-			
+			// OfferedAt
+			result.offeredAt.addAll(offeredAtRepo.findByBuildingIdAndSeqGreaterThan(buildingId, buildingSeq));
 		}
 		
-		return changes;
+		result.needToUpdate = (
+				   !result.dishes.isEmpty() 
+				|| !result.ratings.isEmpty() 
+				|| !result.offeredAt.isEmpty()
+				|| !result.buildings.isEmpty()
+				|| !result.dates.isEmpty()
+				|| !result.deletes.isEmpty()
+				|| result.sequence.getLastSequence() > seq );
+				
+		return result;
 	}
 	
 	//putRating

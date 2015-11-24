@@ -45,15 +45,18 @@ public class Parser extends AParser {
 		
 		Document doc = null;
 		try {
-			doc = Jsoup.connect(urlString).get();
+			doc = Jsoup.connect(urlString).timeout(10000).get();
 			
-		} catch (IOException e) {
+		} catch (IOException e) {			
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			
+			return new LinkedList<Dish>();
 		}
 		
 		//Fix HTML encoded special chars
-		doc = Jsoup.parse(org.apache.commons.lang3.StringEscapeUtils.unescapeHtml4(doc.toString()));
+		final String unescapedString = org.apache.commons.lang3.StringEscapeUtils.unescapeHtml4(doc.toString());
+		doc = Jsoup.parse(unescapedString);
 		
 		//RootDiv <div class="speiseplan"> ... </div>
 		final Element rootDiv = doc.getElementsByClass("speiseplan").first();
@@ -112,10 +115,17 @@ public class Parser extends AParser {
 					String spTitle = divName.text().trim();
 					
 					//Fix: Remove "oder" if first word
-					spTitle = (spTitle.startsWith("oder")) ? spTitle.replace("oder", "").trim() : spTitle;
+					if(spTitle.startsWith("oder")) {
+						spTitle = spTitle.replace("oder", "").trim();
+					}
 					
 					//Fix: Replace "oder mit" with "mit"
 					spTitle = spTitle.replace("oder mit", "mit");
+					
+					//Fix: "mit Kohl" -> Kohl
+					if(spTitle.startsWith("mit ")){
+						spTitle = spTitle.replace("mit ", "");
+					}
 					
 					List<String> spGroupedIngredients = getIngredients(spTitle);
 					String spIngedients = mergeIngredents(spGroupedIngredients);

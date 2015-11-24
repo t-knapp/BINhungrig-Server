@@ -3,8 +3,12 @@ package de.fhbingen.binhungrig.server;
 import java.sql.Date;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import de.fhbingen.binhungrig.server.data.BuildingRepository;
@@ -13,8 +17,10 @@ import de.fhbingen.binhungrig.server.data.ContainerBuildings;
 import de.fhbingen.binhungrig.server.data.DateRepository;
 import de.fhbingen.binhungrig.server.data.DeleteRepository;
 import de.fhbingen.binhungrig.server.data.DishRepository;
+import de.fhbingen.binhungrig.server.data.IngredientRepository;
 import de.fhbingen.binhungrig.server.data.OfferedAtRepository;
 import de.fhbingen.binhungrig.server.data.PhotoRepository;
+import de.fhbingen.binhungrig.server.data.Rating;
 import de.fhbingen.binhungrig.server.data.RatingRepository;
 import de.fhbingen.binhungrig.server.data.SequenceRepository;
 
@@ -24,11 +30,6 @@ public class ClientRestController {
 	/*
 	 * Clients 
 	 */
-	
-	@RequestMapping("/buildings")
-	public ContainerBuildings buildings() {
-		return new ContainerBuildings(buildingRepo.findAll());
-	}
 	
 	@RequestMapping("/changes")
 	public Changes changes(
@@ -45,6 +46,7 @@ public class ClientRestController {
 		// Global stuff: Sequence, Dates, Buildings, Deletes
 		// Clients need to pull changes on all buildings to build list
 		// Clients need to pull dates independent from building id
+		// Clients need to pull ingredients
 		// Sequence is updated at the beginning to ensure no data is skipped
 		// TODO: Alternative: User Database Transactions
 		result.sequence = seqRepo.getLast();
@@ -53,6 +55,8 @@ public class ClientRestController {
 				seq, new Date(System.currentTimeMillis()-86400000));
 		
 		result.buildings = buildingRepo.findBySeqGreaterThan(seq);
+		
+		result.ingredients = ingredientRepo.findBySeqGreaterThan(seq);
 		
 		// Skip deletes if new device 
 		if(seq != 0){
@@ -91,7 +95,24 @@ public class ClientRestController {
 		return result;
 	}
 	
-	//putRating
+	/*
+	
+	 */
+	// Post Rating
+	@RequestMapping(value = "/ratings", method = RequestMethod.POST)
+	@ResponseBody
+	public Rating postRating(@RequestBody final Rating rating){
+		final Rating newRating = ratingRepo.save(rating);
+		
+		//TODO: Fix seq is 0
+		return ratingRepo.findByratingId(newRating.getRatingId());
+	}
+	
+	@RequestMapping(value = "/ratings/{ratingId}", method = RequestMethod.GET)
+	@ResponseBody
+	public Rating getRating(@PathVariable("ratingId") final long rating){
+		return ratingRepo.findByratingId(rating);
+	}
 	
 	//putPhoto
 	
@@ -121,5 +142,8 @@ public class ClientRestController {
 	
 	@Autowired
 	private PhotoRepository photoRepo;
+	
+	@Autowired
+	private IngredientRepository ingredientRepo;
 
 }

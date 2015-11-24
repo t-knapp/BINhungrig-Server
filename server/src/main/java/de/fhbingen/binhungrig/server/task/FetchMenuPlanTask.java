@@ -27,12 +27,13 @@ public class FetchMenuPlanTask {
 		Utils.log("%s : %s", TAG, msg);
 	}
 	
-	@Scheduled(fixedDelay = 300000)
+	@Scheduled(fixedDelay = 3600000)
+	//@Scheduled(cron = "0 0,6,12,18 * * * *")
 	public void fetch(){	
 		List<de.fhbingen.binhungrig.server.data.Building> dbBuildings = buildingRepo.findAll();
 		for(final de.fhbingen.binhungrig.server.data.Building tmpBuilding : dbBuildings){
 			fetchWeekForBuilding(
-					TimeInterval.CURRENTDAY, 
+					TimeInterval.NEXTWEEK, 
 					tmpBuilding.getBuildingId()
 			);
 		}
@@ -57,11 +58,11 @@ public class FetchMenuPlanTask {
 			);
 			if(dbDish == null){
 				// Create new dish and save to DB
-				log("Create new db.dish");
+				//log("Create new db.dish");
 				createDish(tmpDish);
 			} else {
 				// Check if Update is needed, update to DB
-				log("Update dish");
+				//log("Update dish");
 				updateDish(dbDish, tmpDish);
 			}
 		}

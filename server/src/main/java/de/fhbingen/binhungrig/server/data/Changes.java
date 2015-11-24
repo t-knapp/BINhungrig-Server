@@ -6,6 +6,7 @@ import java.util.List;
 public class Changes {
 
 	public List<Building> buildings;
+	public List<Ingredient> ingredients;
     public List<Delete> deletes      = new LinkedList<Delete>();
 	public List<Dish> dishes         = new LinkedList<Dish>();
 	public List<Rating> ratings      = new LinkedList<Rating>();

@@ -10,7 +10,7 @@ public interface RatingRepository extends CrudRepository<Rating, Long>{
 
 	List<Rating> findAll();
 	
-	Rating findByratingId(long id);
+	Rating findByratingId(long ratingId);
 	
 	@Query("SELECT ra FROM Rating ra " + 
 	       "JOIN ra.dish di " + 

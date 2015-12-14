@@ -80,6 +80,9 @@ public class Parser extends AParser {
 				
 				//Title and ingredients
 				final Element divTitle = divMenuSpeise.getElementsByClass(DIVCLASSNAME).first();
+				if(divTitle == null){
+					break;
+				}
 				title = divTitle.text();
 				//String oldTitle = title;
 				List<String> groupedIngredents = getIngredients(title);

@@ -8,6 +8,8 @@ import org.springframework.data.repository.query.Param;
 
 public interface PhotoRepository extends CrudRepository<Photo, Long> {
 
+	Photo findByPhotoId(final long photoId);	
+	
 	@Query("SELECT p FROM Photo p " + 
 	       "JOIN p.dish di " + 
 		   "JOIN di.building b " +

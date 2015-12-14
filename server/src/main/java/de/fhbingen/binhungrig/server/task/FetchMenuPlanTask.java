@@ -33,7 +33,7 @@ public class FetchMenuPlanTask {
 		List<de.fhbingen.binhungrig.server.data.Building> dbBuildings = buildingRepo.findAll();
 		for(final de.fhbingen.binhungrig.server.data.Building tmpBuilding : dbBuildings){
 			fetchWeekForBuilding(
-					TimeInterval.NEXTWEEK, 
+					TimeInterval.CURRENTDAY, 
 					tmpBuilding.getBuildingId()
 			);
 		}

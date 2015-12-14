@@ -1,7 +1,7 @@
 package de.fhbingen.binhungrig.server.data;
 
 import java.sql.Time;
-import java.util.Date;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -68,7 +68,7 @@ public class Building {
 		this.address = address;
 	}
 
-	public Date getTimeOpenFrom() {
+	public Time getTimeOpenFrom() {
 		return timeOpenFrom;
 	}
 
@@ -76,7 +76,7 @@ public class Building {
 		this.timeOpenFrom = timeOpenFrom;
 	}
 
-	public Date getTimeOpenTill() {
+	public Time getTimeOpenTill() {
 		return timeOpenTill;
 	}
 
@@ -90,4 +90,20 @@ public class Building {
                 "Building[buildingId=%d, seq='%d', name='%s', address='%s']",
                 buildingId, seq, name, address);
     }
+	
+	@JsonIgnore
+	public boolean isOpenNow(){
+		// create a java calendar instance
+    	Calendar calendar = Calendar.getInstance();
+    	calendar.set(1970, 0, 1);
+    	 
+    	// get a java date (java.util.Date) from the Calendar instance.
+    	// this java date will represent the current date, or "now".
+    	java.util.Date currentDate = calendar.getTime();
+    	 
+    	// now, create a java.sql.Date from the java.util.Date
+    	java.sql.Date nowDate = new java.sql.Date(currentDate.getTime());
+        return this.timeOpenFrom.before(nowDate)
+                && this.timeOpenTill.after(nowDate);
+	}
 }

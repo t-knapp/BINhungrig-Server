@@ -1,5 +1,6 @@
 package de.fhbingen.binhungrig.server.data;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -14,7 +15,8 @@ public class Delete {
 	private String tableName;
 	
 	//TODO: Shorten (by mapping) name b.c. JSON
-	private long deleteSeqNumber;
+	@Column(name = "id")
+	private long delId;
 	
 	public long getSeq() {
 		return seq;
@@ -22,8 +24,8 @@ public class Delete {
 	public String getTableName() {
 		return tableName;
 	}
-	public long getDeleteSeqNumber() {
-		return deleteSeqNumber;
+	public long getDeleteId() {
+		return delId;
 	}
 
 }

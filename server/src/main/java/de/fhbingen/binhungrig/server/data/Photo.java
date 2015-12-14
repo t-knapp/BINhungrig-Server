@@ -8,10 +8,13 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 @Entity
 @Table(name = "Photos")
@@ -23,9 +26,14 @@ public class Photo {
 	
 	private long seq;
 	
+	@JsonProperty("date")
 	private Date dateUpload;
 	
+	@JsonIgnore
 	private int complains;
+	
+	@Lob
+	private byte[] thumb;
 	
 	@Column(name = "fk_dishId")
 	private long dishId;
@@ -58,5 +66,25 @@ public class Photo {
 	public Dish getDish() {
 		return dish;
 	}
-		
+
+	public void setDateUpload(Date dateUpload) {
+		this.dateUpload = dateUpload;
+	}
+
+	public void setComplains(int complains) {
+		this.complains = complains;
+	}
+	
+	public void setDishId(long dishId) {
+		this.dishId = dishId;
+	}
+
+	public byte[] getThumb() {
+		return thumb;
+	}
+
+	public void setThumb(byte[] thumb) {
+		this.thumb = thumb;
+	}
+	
 }

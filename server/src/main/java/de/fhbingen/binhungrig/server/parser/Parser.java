@@ -84,6 +84,11 @@ public class Parser extends AParser {
 					break;
 				}
 				title = divTitle.text();
+				//Fixed: Skip dish with empty title
+				if(title.trim().isEmpty()){
+					Logger.getGlobal().log(Level.INFO, "Skipping dish with no title");
+					break;
+				}
 				//String oldTitle = title;
 				List<String> groupedIngredents = getIngredients(title);
 				title = removeIngredents(title);
@@ -128,6 +133,12 @@ public class Parser extends AParser {
 					//Fix: "mit Kohl" -> Kohl
 					if(spTitle.startsWith("mit ")){
 						spTitle = spTitle.replace("mit ", "");
+					}
+					
+					//Fixed: Skip dish with empty title
+					if(spTitle.trim().isEmpty()){
+						Logger.getGlobal().log(Level.INFO, "Skipping dish with no title");
+						continue;
 					}
 					
 					List<String> spGroupedIngredients = getIngredients(spTitle);

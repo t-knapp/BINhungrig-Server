@@ -1,5 +1,11 @@
 package de.fhbingen.binhungrig.server.parser;
 
+/**
+ * URL Builder for Studierendenwerk Mainz
+ * 
+ * @author tknapp
+ *
+ */
 public class UrlBuilder {
 
 	private final String BUILDING = "building_id=";

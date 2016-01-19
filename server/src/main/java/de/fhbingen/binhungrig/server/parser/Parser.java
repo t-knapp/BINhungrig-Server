@@ -1,7 +1,6 @@
 package de.fhbingen.binhungrig.server.parser;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -18,8 +17,13 @@ import org.jsoup.select.Elements;
 import org.springframework.util.StringUtils;
 
 import de.fhbingen.binhungrig.server.parser.Dish.DishType;
-import de.fhbingen.binhungrig.server.parser.UrlBuilder.Building;
 
+/**
+ * Parser implementation for Studierendenwerk Mainz
+ * 
+ * @author tknapp
+ *
+ */
 public class Parser extends AParser {
 
 	private static final String DIVCLASSDATE    = "speiseplan_date";
@@ -35,6 +39,9 @@ public class Parser extends AParser {
 	private static final String DIVCLASSSPDISH  = "special_menu";
 	private static final String DIVCLASSSPNAME  = "spmenuname";
 	
+	/**
+	 * Main parse method
+	 */
 	@Override
 	public List<Dish> parse(UrlBuilder builder) {
 		final String urlString = builder.getUrl();
@@ -209,6 +216,7 @@ public class Parser extends AParser {
 	
 	/**
 	 * Removes ingredients from dish title
+	 * 
 	 * @param title
 	 * @return
 	 */
@@ -222,12 +230,24 @@ public class Parser extends AParser {
 		return matcherWhitespaces.replaceAll(" ");
 	}
 	
+	/**
+	 * Extracts date string in yyyy-mm-dd format from Element
+	 * 
+	 * @param divDate
+	 * @return
+	 */
 	private String getDate(final Element divDate){
 		//input text: Montag 16-11-2015
 		final String[] dateParts = divDate.text().split(" ")[1].split("-");
 		return dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0];
 	}
 	
+	/**
+	 * RegExes prices for students and non-students from a string
+	 * 
+	 * @param strPrice
+	 * @return
+	 */
 	private Float[] getPrices(final String strPrice){
 		final Pattern pattern = Pattern.compile("(\\d+.\\d{2})");
 		final Matcher matcher = pattern.matcher(strPrice);
@@ -238,6 +258,12 @@ public class Parser extends AParser {
 		return prices;
 	}
 	
+	/**
+	 * Extracts DishType from Element
+	 * 
+	 * @param divElement
+	 * @return
+	 */
 	private DishType getType(final Element divElement){
 		if(divElement.toString().contains("Veggi")){
 			return DishType.VEGETARIAN;

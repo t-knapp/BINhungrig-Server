@@ -3,6 +3,12 @@ package de.fhbingen.binhungrig.server.data;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * Container object holding all changes
+ * 
+ * @author tknapp
+ *
+ */
 public class Changes {
 
 	public List<Building> buildings;

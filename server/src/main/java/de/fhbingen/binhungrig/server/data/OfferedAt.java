@@ -1,16 +1,21 @@
 package de.fhbingen.binhungrig.server.data;
 
-import java.io.Serializable;
-
 import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+/**
+ * JPA Entity for offeredAt
+ * 
+ * Technical it is a Join-Table which should not have a dedicated entity,
+ * but in our usecase this entity is needed for sync.
+ * 
+ * @author tknapp
+ *
+ */
 @Entity
 @Table(name = "offeredAt")
 public class OfferedAt {

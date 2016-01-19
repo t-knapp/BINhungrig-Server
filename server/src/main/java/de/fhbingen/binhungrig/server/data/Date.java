@@ -13,6 +13,12 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+/**
+ * JPA Entity for Dates
+ * 
+ * @author tknapp
+ *
+ */
 @Entity
 @Table(name = "Dates")
 public class Date {

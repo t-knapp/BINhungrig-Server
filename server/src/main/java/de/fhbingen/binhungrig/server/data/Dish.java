@@ -1,13 +1,9 @@
 package de.fhbingen.binhungrig.server.data;
 
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -25,6 +21,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import de.fhbingen.binhungrig.server.parser.Dish.DishType;
 
+/**
+ * JPA Entity for Dishes
+ * 
+ * @author tknapp
+ *
+ */
 @Entity
 @Table(name = "Dishes")
 public class Dish {
@@ -159,6 +161,12 @@ public class Dish {
 		return false;
 	}
 	
+	/**
+	 * Updates this dish with date provided by newDish object
+	 * 
+	 * @param newDish
+	 * @return
+	 */
 	public Dish update(final de.fhbingen.binhungrig.server.parser.Dish newDish){
 		// Possible Changes: Prices, Ingredients
 		priceNonStd = newDish.getPriceNonStd();

@@ -5,3 +5,6 @@ server/.settings/
 .classpath
 .project
 
+
+server/src/main/resources/application-model.properties
+server/src/main/resources/application.properties

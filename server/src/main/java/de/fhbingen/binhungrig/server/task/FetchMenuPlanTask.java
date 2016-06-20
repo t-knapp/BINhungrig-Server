@@ -18,6 +18,12 @@ import de.fhbingen.binhungrig.server.parser.Parser;
 import de.fhbingen.binhungrig.server.parser.UrlBuilder;
 import de.fhbingen.binhungrig.server.parser.UrlBuilder.TimeInterval;
 
+/**
+ * Menu plan fetcher task
+ * 
+ * @author tknapp
+ *
+ */
 @Component
 public class FetchMenuPlanTask {
 
@@ -39,6 +45,12 @@ public class FetchMenuPlanTask {
 		}
 	}
 	
+	/**
+	 * Fetches menu plan for given building and given time interval (day|week|nextweek)
+	 * 
+	 * @param timeInterval
+	 * @param buildingId
+	 */
 	private void fetchWeekForBuilding(final TimeInterval timeInterval, final long buildingId){
 		final Parser parser = new Parser();
 		final UrlBuilder urlBuilder = new UrlBuilder();
@@ -68,6 +80,12 @@ public class FetchMenuPlanTask {
 		}
 	}
 	
+	/**
+	 * Updates a dbDish with data provided by Dish object
+	 * 
+	 * @param dbDish
+	 * @param newDish
+	 */
 	private void updateDish(de.fhbingen.binhungrig.server.data.Dish dbDish, final Dish newDish){
 		// Check Dish contents (price, ingredients, etc.) and update if needed
 		if(dbDish.needToUpdate(newDish)){
@@ -89,6 +107,11 @@ public class FetchMenuPlanTask {
 		}
 	}
 	
+	/**
+	 * Creates a new Dish Entity and OfferedAt Entity
+	 * 
+	 * @param newDish
+	 */
 	private void createDish(final Dish newDish){
 		// Check if Date exists in Dates, extract DateId
 		final long dbDateId = checkCreateDateId(newDish.getDate());
@@ -110,6 +133,12 @@ public class FetchMenuPlanTask {
 		offeredAtRepo.save(oA);
 	}
 	
+	/**
+	 * Checks if Date Entity exists or create it.
+	 * 
+	 * @param strDate
+	 * @return
+	 */
 	private long checkCreateDateId(final String strDate){
 		// Check if Date exists in Dates, extract DateId
 		de.fhbingen.binhungrig.server.data.Date dbDate = dateRepo.findByDate(Date.valueOf(strDate));

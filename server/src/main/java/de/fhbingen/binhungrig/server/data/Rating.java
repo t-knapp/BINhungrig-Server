@@ -12,6 +12,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+/**
+ * JPA Entity for Ratings
+ * 
+ * @author tknapp
+ *
+ */
 @Entity
 @Table(name = "Ratings")
 public class Rating {

@@ -14,8 +14,13 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
+/**
+ * JPA Entity for Photos
+ * 
+ * @author tknapp
+ *
+ */
 @Entity
 @Table(name = "Photos")
 public class Photo {

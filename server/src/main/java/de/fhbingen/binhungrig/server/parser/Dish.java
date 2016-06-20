@@ -2,8 +2,12 @@ package de.fhbingen.binhungrig.server.parser;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
-import de.fhbingen.binhungrig.server.parser.UrlBuilder.Building;
-
+/**
+ * Object representing a dish for parser.
+ * 
+ * @author tknapp
+ *
+ */
 public class Dish {
 
 	public enum DishType {

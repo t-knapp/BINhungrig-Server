@@ -4,6 +4,12 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+/**
+ * JPA Entity for Ingredients
+ * 
+ * @author tknapp
+ *
+ */
 @Entity
 @Table(name="Ingredients")
 public class Ingredient {

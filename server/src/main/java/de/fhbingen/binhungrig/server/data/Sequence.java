@@ -4,6 +4,14 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+/**
+ * JPA Entity for Sequences
+ * 
+ * Entity for ensuring 'global unique PK' seq in every entity.
+ * 
+ * @author tknapp
+ *
+ */
 @Entity
 @Table(name = "_sequence")
 public class Sequence {

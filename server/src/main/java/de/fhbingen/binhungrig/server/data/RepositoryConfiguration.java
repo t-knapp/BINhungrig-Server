@@ -19,6 +19,9 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+/**
+ * Configuration for JPA/Hibernate
+ */
 @Configuration
 @EnableAutoConfiguration
 @EntityScan(basePackages = {"de.fhbingen.binhungrig.server.data"})
@@ -84,7 +87,6 @@ public class RepositoryConfiguration {
 		LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
 		factory.setJpaVendorAdapter(vendorAdapter);
 		factory.setPackagesToScan("de.fhbingen.binhungrig.server");
-		//factory.setPackagesToScan("de.fhbingen.epro.vl5.entity");
 		factory.setDataSource(dataSource);
 		factory.afterPropertiesSet();
 		

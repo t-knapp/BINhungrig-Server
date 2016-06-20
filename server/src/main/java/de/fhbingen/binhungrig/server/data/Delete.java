@@ -5,6 +5,16 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+/**
+ * JPA Entity for Deletes
+ * 
+ * Deletes are not 'replicated' on clientside, they are applied.
+ * Means every tuple in table is searched on clientside and will 
+ * be deleted on device.
+ * 
+ * @author tknapp
+ *
+ */
 @Entity
 @Table(name="_deletes")
 public class Delete {
@@ -14,7 +24,6 @@ public class Delete {
 	
 	private String tableName;
 	
-	//TODO: Shorten (by mapping) name b.c. JSON
 	@Column(name = "id")
 	private long delId;
 	

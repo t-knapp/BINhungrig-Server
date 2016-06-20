@@ -9,7 +9,8 @@ package de.fhbingen.binhungrig.server.parser;
 public class UrlBuilder {
 
 	private final String BUILDING = "building_id=";
-	private String baseURL = "http://www.studierendenwerk-mainz.de/speiseplan/db/include.php?";
+	//private String baseURL = "http://www.studierendenwerk-mainz.de/speiseplan/db/include.php?";
+	private String baseURL = "http://www.studierendenwerk-mainz.de/speiseplan/frontend/index.php?";
 	private long building;
 	private TimeInterval timeInterval;
 		

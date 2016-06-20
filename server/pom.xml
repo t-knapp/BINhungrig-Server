@@ -52,10 +52,12 @@
         <groupId>mysql</groupId>
         <artifactId>mysql-connector-java</artifactId>
         </dependency>
+    <!--
     <dependency>
     	<groupId>org.springframework.boot</groupId>
     	<artifactId>spring-boot-starter-amqp</artifactId>
     </dependency>
+    -->
     
     <!-- Resize image -->
     <dependency>
@@ -69,6 +71,12 @@
     	<groupId>org.springframework.boot</groupId>
     	<artifactId>spring-boot-starter-cloud-connectors</artifactId>
     </dependency>
+    <dependency>
+        <groupId>org.codehaus.plexus</groupId>
+        <artifactId>plexus-utils</artifactId>
+        <version>3.0.15</version>
+    </dependency>
+
     <dependency>
     	<groupId>org.springframework.boot</groupId>
     	<artifactId>spring-boot-starter-data-gemfire</artifactId>

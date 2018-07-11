@@ -3,13 +3,16 @@
   "version": "2.0.0",
   "description": "BINhungrig app backend written in node.",
   "main": "index.js",
-  "dependencies": {
-    "express": "^4.16.3"
-  },
-  "devDependencies": {},
   "scripts": {
-    "start": "node index.js",
+    "start": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^4.16.3",
+    "http-status-codes": "^1.3.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.1"
   },
   "repository": {
     "type": "git",
